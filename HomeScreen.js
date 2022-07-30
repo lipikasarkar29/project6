@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
 import { Header } from 'react-native-elements';
+
 export default class HomeScreen extends Component{
   constructor() {
     super();
@@ -14,52 +15,23 @@ export default class HomeScreen extends Component{
     };
   }
 
-  getWord=(word)=>{
-    var searchKeyword=word.toLowerCase()
-    var url = "https://rupinwhitehatjr.github.io/dictionary/"+searchKeyword+".json"
-    //console.log(url)
-    return fetch(url)
-    .then((data)=>{
-      if(data.status===200)
-      {
-        return data.json()
-      }
-      else
-      {
-        return null
-      }
-    })
-    .then((response)=>{
-        //console.log(response)
-
-        var responseObject = response
-        //var word = responseObject.word
-        //var lexicalCategory = responseObject.results[0].lexicalEntries[0].lexicalCategory.text
-        if(responseObject)
-        {
-          var wordData = responseObject.definitions[0]
-          //console.log(responseObject.definitions[0])
-          var definition=wordData.description
-          var lexicalCategory=wordData.wordtype
-          //console.log(lexicalCategory)
-          this.setState({
-            "word" : this.state.text, 
-            "definition" :definition,
-            "lexicalCategory": lexicalCategory     
-            
-          })
-        }
-        else
-        {
-          this.setState({
-            "word" : this.state.text, 
-            "definition" :"Not Found",
-            
-          })
-
-        }
-    
-    })
+  getWord=(text)=>{
+    var text = text.toLowerCase()
+    try{
+      var word = dictionary[text]["word"]
+      var lexicalCategory = dictionary[text]["lexicalCategory"]
+      var definition = dictionary[text]["definition"]
+      this.setState({
+        
+      })
+    }
+    catch(err){
+      alert("Sorry This word is not available for now")
+      this.setState({
+        'text':'',
+        'isSearchPressed':false
+      })
+    }
   }
 
   render(){
@@ -73,7 +45,6 @@ export default class HomeScreen extends Component{
           }}
         />
         <View style={styles.inputBoxContainer}>
-        
           <TextInput
             style={styles.inputBox}
             onChangeText={text => {
@@ -83,7 +54,7 @@ export default class HomeScreen extends Component{
                 word  : "Loading...",
                 lexicalCategory :'',
                 examples : [],
-                definition : ""
+                defination : ""
               });
             }}
             value={this.state.text}
